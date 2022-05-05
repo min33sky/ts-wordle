@@ -25,6 +25,7 @@ const Home: NextPage = () => {
   return (
     <div>
       <h1>Wordle (Lingo)</h1>
+      <div>solution - {solution}</div>
       {solution && <Wordle solution={solution} />}
     </div>
   );
