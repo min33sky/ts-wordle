@@ -1,9 +1,15 @@
 import React, { useState } from 'react';
 
+type FormattedGuess = {
+  key: string;
+  color: string;
+}[];
+
 export function useWordle(solution: string) {
   const [turn, setTurn] = useState(0);
   const [currentGuess, setCurrentGuess] = useState(''); // 현재 입력한 추측값
-  const [guesses, setGuesses] = useState([]); // each guess is array
+
+  const [guesses, setGuesses] = useState<FormattedGuess[]>([]); // each guess is array
   const [history, setHistory] = useState<string[]>([]); // each guess is a string
   const [isCorrect, setIsCorrect] = useState(false);
 
@@ -43,7 +49,24 @@ export function useWordle(solution: string) {
    * update the isCorrect state if the guess is correct
    * add one to the turn state
    */
-  const addNewGuess = () => {};
+  const addNewGuess = (formatted: FormattedGuess) => {
+    // 정답인지 확인
+    if (currentGuess === solution) {
+      setIsCorrect(true);
+    }
+
+    // guesses 배열에 추가
+    setGuesses((prev) => [...prev, formatted]);
+
+    // history 배열에 추가
+    setHistory((prev) => [...prev, currentGuess]);
+
+    // turn 추가
+    setTurn((prev) => prev + 1);
+
+    // 입력값 초기화
+    setCurrentGuess('');
+  };
 
   /**
    * handle keyup event & track current guess
@@ -71,7 +94,7 @@ export function useWordle(solution: string) {
 
       //* 포맷팅
       const formatted = formatGuess();
-      console.log(formatted);
+      addNewGuess(formatted);
     }
 
     if (key === 'Backspace') {
