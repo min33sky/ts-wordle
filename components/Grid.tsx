@@ -1,16 +1,13 @@
 import React from 'react';
+import { FormattedGuess } from '../hooks/useWordle';
 import Row from './Row';
 
-const ROWS = 6;
-
-function Grid() {
+function Grid({ guesses }: { guesses: FormattedGuess[] }) {
   return (
     <>
-      {Array(ROWS)
-        .fill(null)
-        .map((_, index) => (
-          <Row key={index} />
-        ))}
+      {guesses.map((guess, index) => (
+        <Row key={index} guess={guess} />
+      ))}
     </>
   );
 }

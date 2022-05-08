@@ -1,14 +1,27 @@
 import React from 'react';
+import { FormattedGuess } from '../hooks/useWordle';
 
-function Row() {
+function Row({ guess }: { guess: FormattedGuess }) {
   return (
-    <div className="row">
-      <div>A</div>
-      <div>B</div>
-      <div>C</div>
-      <div>D</div>
-      <div>E</div>
-    </div>
+    <>
+      {guess.length > 0 ? (
+        <div className="row past">
+          {guess.map((letter, index) => (
+            <div key={index} className={letter.color}>
+              {letter.key}
+            </div>
+          ))}
+        </div>
+      ) : (
+        <div className="row">
+          <div></div>
+          <div></div>
+          <div></div>
+          <div></div>
+          <div></div>
+        </div>
+      )}
+    </>
   );
 }
 

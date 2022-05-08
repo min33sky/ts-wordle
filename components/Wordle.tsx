@@ -18,7 +18,7 @@ function Wordle({ solution }: { solution: string }) {
   return (
     <>
       <div>Current Guess - {currentGuess}</div>
-      <Grid />
+      <Grid guesses={guesses} />
     </>
   );
 }

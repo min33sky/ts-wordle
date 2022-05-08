@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-type FormattedGuess = {
+export type FormattedGuess = {
   key: string;
   color: string;
 }[];
@@ -9,7 +9,7 @@ export function useWordle(solution: string) {
   const [turn, setTurn] = useState(0);
   const [currentGuess, setCurrentGuess] = useState(''); // 현재 입력한 추측값
 
-  const [guesses, setGuesses] = useState<FormattedGuess[]>([]); // each guess is array
+  const [guesses, setGuesses] = useState<FormattedGuess[]>([[], [], [], [], [], []]); // each guess is array
   const [history, setHistory] = useState<string[]>([]); // each guess is a string
   const [isCorrect, setIsCorrect] = useState(false);
 
@@ -55,8 +55,8 @@ export function useWordle(solution: string) {
       setIsCorrect(true);
     }
 
-    // guesses 배열에 추가
-    setGuesses((prev) => [...prev, formatted]);
+    // guesses 배열에 추가 (해당 turn에 해당하는 인덱스에 넣어준다.)
+    setGuesses((prev) => [...prev.slice(0, turn), formatted, ...prev.slice(turn + 1)]);
 
     // history 배열에 추가
     setHistory((prev) => [...prev, currentGuess]);
@@ -74,7 +74,7 @@ export function useWordle(solution: string) {
    */
   const handleKeyUp = ({ key }: KeyboardEvent) => {
     if (key === 'Enter') {
-      //* 5턴까지만 입력을 받는다.
+      //* 6턴까지만 입력을 받는다.
       if (turn > 5) {
         console.log('limit 5 turn');
         return;
