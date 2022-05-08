@@ -5,6 +5,7 @@ import Grid from './Grid';
 function Wordle({ solution }: { solution: string }) {
   const { currentGuess, handleKeyUp, turn, guesses, isCorrect } = useWordle(solution);
 
+  //* 키보드 이벤트 등록
   useEffect(() => {
     window.addEventListener('keyup', handleKeyUp);
     return () => window.removeEventListener('keyup', handleKeyUp);
@@ -18,7 +19,7 @@ function Wordle({ solution }: { solution: string }) {
   return (
     <>
       <div>Current Guess - {currentGuess}</div>
-      <Grid guesses={guesses} />
+      <Grid guesses={guesses} currentGuess={currentGuess} turn={turn} />
     </>
   );
 }

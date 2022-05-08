@@ -16,7 +16,6 @@ const Home: NextPage = () => {
     fetch('/api/wordle')
       .then((res) => res.json())
       .then((data: SolutionsResponse) => {
-        console.log(data);
         const randomSolution = data.solution[Math.floor(Math.random() * data.solution.length)].word;
         setSolution(randomSolution);
       });
