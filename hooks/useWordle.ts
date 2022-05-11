@@ -11,6 +11,7 @@ export function useWordle(solution: string) {
 
   const [guesses, setGuesses] = useState<FormattedGuess[]>([[], [], [], [], [], []]); // each guess is array
   const [history, setHistory] = useState<string[]>([]); // each guess is a string
+  const [usedKeys, setUsedKeys] = useState<{ [key: string]: 'green' | 'yellow' | 'grey' }>({}); // keypad color
   const [isCorrect, setIsCorrect] = useState(false);
 
   /**
@@ -49,20 +50,47 @@ export function useWordle(solution: string) {
    * update the isCorrect state if the guess is correct
    * add one to the turn state
    */
-  const addNewGuess = (formatted: FormattedGuess) => {
+  const addNewGuess = (formattedGuess: FormattedGuess) => {
     // 정답인지 확인
     if (currentGuess === solution) {
       setIsCorrect(true);
     }
 
     // guesses 배열에 추가 (해당 turn에 해당하는 인덱스에 넣어준다.)
-    setGuesses((prev) => [...prev.slice(0, turn), formatted, ...prev.slice(turn + 1)]);
+    setGuesses((prev) => [...prev.slice(0, turn), formattedGuess, ...prev.slice(turn + 1)]);
 
     // history 배열에 추가
     setHistory((prev) => [...prev, currentGuess]);
 
     // turn 추가
     setTurn((prev) => prev + 1);
+
+    // 키패드 색깔 정하기
+    setUsedKeys((prev) => {
+      /**
+       *? 현재 키패드의 색깔과 다음에 표시될 글자의 색깔을 비교해서 다음 키패드의 색깔을 정한다.
+       */
+      formattedGuess.forEach((letter) => {
+        const currentColor = prev[letter.key]; // 현재 키패드의 색깔 (이미 칠해져 있는 색깔)
+
+        if (letter.color === 'green') {
+          prev[letter.key] = 'green';
+          return;
+        }
+
+        if (letter.color === 'yellow' && currentColor !== 'green') {
+          prev[letter.key] = 'yellow';
+          return;
+        }
+
+        if (letter.color === 'grey' && currentColor !== ('green' || 'yellow')) {
+          prev[letter.key] = 'grey';
+          return;
+        }
+      });
+
+      return prev;
+    });
 
     // 입력값 초기화
     setCurrentGuess('');
@@ -109,5 +137,5 @@ export function useWordle(solution: string) {
     }
   };
 
-  return { turn, currentGuess, guesses, isCorrect, handleKeyUp };
+  return { turn, currentGuess, guesses, isCorrect, handleKeyUp, usedKeys };
 }
