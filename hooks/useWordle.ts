@@ -8,8 +8,11 @@ export type FormattedGuess = {
 export function useWordle(solution: string) {
   const [turn, setTurn] = useState(0);
   const [currentGuess, setCurrentGuess] = useState(''); // 현재 입력한 추측값
-
-  const [guesses, setGuesses] = useState<FormattedGuess[]>([[], [], [], [], [], []]); // each guess is array
+  const [guesses, setGuesses] = useState<FormattedGuess[]>(
+    Array(6)
+      .fill(null)
+      .map((_) => [])
+  ); // each guess is array
   const [history, setHistory] = useState<string[]>([]); // each guess is a string
   const [usedKeys, setUsedKeys] = useState<{ [key: string]: 'green' | 'yellow' | 'grey' }>({}); // keypad color
   const [isCorrect, setIsCorrect] = useState(false);
@@ -65,31 +68,33 @@ export function useWordle(solution: string) {
     // turn 추가
     setTurn((prev) => prev + 1);
 
-    // 키패드 색깔 정하기
-    setUsedKeys((prev) => {
+    //? 키패드 색깔 정하기
+    setUsedKeys((prevUsedKeys) => {
       /**
        *? 현재 키패드의 색깔과 다음에 표시될 글자의 색깔을 비교해서 다음 키패드의 색깔을 정한다.
        */
       formattedGuess.forEach((letter) => {
-        const currentColor = prev[letter.key]; // 현재 키패드의 색깔 (이미 칠해져 있는 색깔)
+        const currentColor = prevUsedKeys[letter.key]; // 현재 키패드의 색깔 (이미 칠해져 있는 색깔)
 
         if (letter.color === 'green') {
-          prev[letter.key] = 'green';
+          prevUsedKeys[letter.key] = 'green';
           return;
         }
 
+        //* 이미 초록색인 경우에는 초록색 유지 아니면 노란색으로 변경
         if (letter.color === 'yellow' && currentColor !== 'green') {
-          prev[letter.key] = 'yellow';
+          prevUsedKeys[letter.key] = 'yellow';
           return;
         }
 
+        //* 이미 초록색이나 노란색이 아니라면 회색으로 변경
         if (letter.color === 'grey' && currentColor !== ('green' || 'yellow')) {
-          prev[letter.key] = 'grey';
+          prevUsedKeys[letter.key] = 'grey';
           return;
         }
       });
 
-      return prev;
+      return prevUsedKeys;
     });
 
     // 입력값 초기화

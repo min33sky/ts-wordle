@@ -3,7 +3,7 @@ import { useWordle } from '../hooks/useWordle';
 import Grid from './Grid';
 import KeyPad from './KeyPad';
 
-function Wordle({ solution, keys }: { solution: string; keys: { key: string }[] }) {
+function Wordle({ solution }: { solution: string }) {
   const { currentGuess, handleKeyUp, turn, guesses, isCorrect, usedKeys } = useWordle(solution);
 
   //* 키보드 이벤트 등록
@@ -21,7 +21,7 @@ function Wordle({ solution, keys }: { solution: string; keys: { key: string }[] 
     <>
       <div>Current Guess - {currentGuess}</div>
       <Grid guesses={guesses} currentGuess={currentGuess} turn={turn} />
-      <KeyPad keys={keys} usedKeys={usedKeys} />
+      <KeyPad usedKeys={usedKeys} />
     </>
   );
 }

@@ -1,16 +1,12 @@
-function KeyPad({
-  keys,
-  usedKeys,
-}: {
-  keys: { key: string }[];
-  usedKeys: { [key: string]: 'green' | 'yellow' | 'grey' };
-}) {
-  console.log('사용된 키들: ', usedKeys);
+import { KEYPADS } from '../constants/keypad';
 
+function KeyPad({ usedKeys }: { usedKeys: { [key: string]: 'green' | 'yellow' | 'grey' } }) {
   return (
     <div className="keypad">
-      {keys.map((letter) => (
-        <div key={letter.key}>{letter.key}</div>
+      {KEYPADS.map((letter) => (
+        <div key={letter.key} className={usedKeys[letter.key]}>
+          {letter.key}
+        </div>
       ))}
     </div>
   );

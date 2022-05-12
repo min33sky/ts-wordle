@@ -3,9 +3,6 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import wordDb from '../../data/db.json';
 
 type Data = {
-  letters: {
-    key: string;
-  }[];
   solution: {
     id: number;
     word: string;
@@ -13,5 +10,5 @@ type Data = {
 };
 
 export default function handler(req: NextApiRequest, res: NextApiResponse<Data>) {
-  res.status(200).json({ solution: wordDb.solutions, letters: wordDb.letters });
+  res.status(200).json({ solution: wordDb.solutions });
 }
