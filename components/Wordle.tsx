@@ -1,16 +1,29 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useWordle } from '../hooks/useWordle';
 import Grid from './Grid';
 import KeyPad from './KeyPad';
+import Modal from './Modal';
 
 function Wordle({ solution }: { solution: string }) {
   const { currentGuess, handleKeyUp, turn, guesses, isCorrect, usedKeys } = useWordle(solution);
+  const [showModal, setShowModal] = useState(false);
 
   //* 키보드 이벤트 등록
   useEffect(() => {
     window.addEventListener('keyup', handleKeyUp);
+
+    if (isCorrect) {
+      setTimeout(() => setShowModal(true), 2000);
+      window.removeEventListener('keyup', handleKeyUp);
+    }
+
+    if (turn > 5) {
+      setTimeout(() => setShowModal(true), 2000);
+      window.removeEventListener('keyup', handleKeyUp);
+    }
+
     return () => window.removeEventListener('keyup', handleKeyUp);
-  }, [handleKeyUp]);
+  }, [handleKeyUp, isCorrect, turn]);
 
   useEffect(() => {
     console.log(`guess: `, guesses);
@@ -22,6 +35,7 @@ function Wordle({ solution }: { solution: string }) {
       <div>Current Guess - {currentGuess}</div>
       <Grid guesses={guesses} currentGuess={currentGuess} turn={turn} />
       <KeyPad usedKeys={usedKeys} />
+      {showModal && <Modal isCorrect={isCorrect} turn={turn} solution={solution} />}
     </>
   );
 }

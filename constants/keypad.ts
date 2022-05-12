@@ -18,7 +18,7 @@ export const KEYPADS = [
   { key: 'j' },
   { key: 'k' },
   { key: 'l' },
-  { key: 'enter' },
+  { key: '⏎' },
   { key: 'z' },
   { key: 'x' },
   { key: 'c' },
@@ -26,5 +26,5 @@ export const KEYPADS = [
   { key: 'b' },
   { key: 'n' },
   { key: 'm' },
-  { key: 'back' },
+  { key: '←' },
 ];
