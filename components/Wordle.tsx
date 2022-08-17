@@ -3,9 +3,11 @@ import { useWordle } from '../hooks/useWordle';
 import Grid from './Grid';
 import KeyPad from './KeyPad';
 import Modal from './Modal';
+import { Portal } from './Portal';
 
 function Wordle({ solution }: { solution: string }) {
-  const { currentGuess, handleKeyUp, turn, guesses, isCorrect, usedKeys } = useWordle(solution);
+  const { currentGuess, handleKeyUp, turn, guesses, isCorrect, usedKeys } =
+    useWordle(solution);
   const [showModal, setShowModal] = useState(false);
 
   //* 키보드 이벤트 등록
@@ -35,7 +37,11 @@ function Wordle({ solution }: { solution: string }) {
       <div>Current Guess - {currentGuess}</div>
       <Grid guesses={guesses} currentGuess={currentGuess} turn={turn} />
       <KeyPad usedKeys={usedKeys} />
-      {showModal && <Modal isCorrect={isCorrect} turn={turn} solution={solution} />}
+      {showModal && (
+        <Portal>
+          <Modal isCorrect={isCorrect} turn={turn} solution={solution} />
+        </Portal>
+      )}
     </>
   );
 }
