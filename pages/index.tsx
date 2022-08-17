@@ -1,6 +1,7 @@
+import Wordle from '@/components/Wordle';
+import { getBaseUrl } from '@/lib/getBaseUrl';
 import type { NextPage } from 'next';
 import { useEffect, useState } from 'react';
-import Wordle from '../components/Wordle';
 
 export type SolutionsResponse = {
   letters: {
@@ -12,17 +13,18 @@ export type SolutionsResponse = {
   }[];
 };
 
-const Home: NextPage = () => {
-  const [solution, setSolution] = useState<string>();
+const Home: NextPage<{ keyword: string }> = ({ keyword }) => {
+  const [solution, setSolution] = useState<string>(keyword);
 
-  useEffect(() => {
-    fetch('/api/wordle')
-      .then((res) => res.json())
-      .then((data: SolutionsResponse) => {
-        const randomSolution = data.solution[Math.floor(Math.random() * data.solution.length)].word;
-        setSolution(randomSolution);
-      });
-  }, []);
+  // useEffect(() => {
+  //   fetch('/api/wordle')
+  //     .then((res) => res.json())
+  //     .then((data: SolutionsResponse) => {
+  //       const randomSolution =
+  //         data.solution[Math.floor(Math.random() * data.solution.length)].word;
+  //       setSolution(randomSolution);
+  //     });
+  // }, []);
 
   return (
     <div>
@@ -34,3 +36,14 @@ const Home: NextPage = () => {
 };
 
 export default Home;
+
+export const getServerSideProps = async () => {
+  const res = await fetch(`${getBaseUrl()}/api/wordle`);
+  const data = await res.json();
+  return {
+    props: {
+      keyword:
+        data.solution[Math.floor(Math.random() * data.solution.length)].word,
+    },
+  };
+};
