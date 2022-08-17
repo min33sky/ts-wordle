@@ -1,45 +1,37 @@
+import Header from '@/components/Header';
 import Wordle from '@/components/Wordle';
 import { getBaseUrl } from '@/lib/getBaseUrl';
 import type { NextPage } from 'next';
-import { useEffect, useState } from 'react';
-
-export type SolutionsResponse = {
-  letters: {
-    key: string;
-  }[];
-  solution: {
-    id: number;
-    word: string;
-  }[];
-};
+import { useState } from 'react';
 
 const Home: NextPage<{ keyword: string }> = ({ keyword }) => {
   const [solution, setSolution] = useState<string>(keyword);
 
-  // useEffect(() => {
-  //   fetch('/api/wordle')
-  //     .then((res) => res.json())
-  //     .then((data: SolutionsResponse) => {
-  //       const randomSolution =
-  //         data.solution[Math.floor(Math.random() * data.solution.length)].word;
-  //       setSolution(randomSolution);
-  //     });
-  // }, []);
+  console.log('Solution: ', solution);
 
   return (
-    <div>
-      <h1>Wordle (Lingo)</h1>
-      <div>solution - {solution}</div>
-      {solution && <Wordle solution={solution} />}
-    </div>
+    <>
+      <Header />
+      <main>
+        <Wordle solution={solution} />
+      </main>
+    </>
   );
 };
 
 export default Home;
 
+export interface IKeywordResponse {
+  solution: {
+    id: number;
+    word: string;
+  }[];
+}
+
 export const getServerSideProps = async () => {
   const res = await fetch(`${getBaseUrl()}/api/wordle`);
-  const data = await res.json();
+  const data: IKeywordResponse = await res.json();
+
   return {
     props: {
       keyword:

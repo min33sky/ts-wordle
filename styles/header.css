@@ -1,0 +1,7 @@
+header {
+  font-size: var(--header-font-size);
+  font-weight: bold;
+  padding: 20px 0;
+  letter-spacing: 0.2rem;
+  color: var(--secondary-font-color);
+}
