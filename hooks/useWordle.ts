@@ -14,23 +14,23 @@ const CHAR_LIMIT = 5; //* 글자수 제한
 
 /**
  * Wordle 관련 Hook
- * @param solution - an Answer String
+ * @param answer - an Answer String
  */
-export function useWordle(solution: string) {
+export function useWordle(answer: string) {
   const [turn, setTurn] = useState(0);
   const [currentGuess, setCurrentGuess] = useState(''); // 현재 입력한 추측값
   const [history, setHistory] = useState<string[]>([]); // 추측값들을 담은 배열 (문자열 배열)
-  const [guesses, setGuesses] = useState<FormattedGuess[]>(Array(6).fill([])); // 화면에 보여주기 위해 설정한 추측값들의 배열
-  const [usedKeys, setUsedKeys] = useState<IUsedKeys>({}); // 사용된 키들과 키에 해당하는 색상을 설정한 객체
+  const [guesses, setGuesses] = useState<FormattedGuess[]>(Array(6).fill([])); // 포맷팅한 추측값들의 배열
+  const [usedKeys, setUsedKeys] = useState<IUsedKeys>({}); // 키패드에 사용된 키들을 표시하기 위한 객체
   const [isCorrect, setIsCorrect] = useState(false);
 
   /**
-   * format a guess into an array of letter objects
-   * e.g. [{key: 'a', color: 'yellow}]
+   * 각 문자들을 포맷팅하여 배열에 넣어주는 함수
+   * @example [{key: 'a', color: 'yellow'}, [{key: 'c', color: 'green'}]
    */
-  const formatGuess = () => {
+  const formatCurrentGuess = () => {
     //* 초기 설정
-    const solutionArray = Array.from(solution);
+    const answerArray = Array.from(answer);
     const formattedGuess = Array.from(currentGuess).map((letter) => ({
       key: letter,
       color: 'grey',
@@ -38,17 +38,17 @@ export function useWordle(solution: string) {
 
     //* 문자가 존재하고 위치가 같은지 확인
     formattedGuess.forEach((item, index) => {
-      if (item.key === solutionArray[index]) {
+      if (item.key === answerArray[index]) {
         item.color = 'green';
-        solutionArray[index] = '_'; //? 이미 확인했으니 다음 확인 대상에서 제외
+        answerArray[index] = '_'; //? 이미 확인했으니 다음 확인 대상에서 제외
       }
     });
 
     //* 문자는 존재하나 다른 위치일 경우를 확인 (이미 확인한 것은 제외)
     formattedGuess.forEach((item) => {
-      if (solutionArray.includes(item.key) && item.color !== 'green') {
+      if (answerArray.includes(item.key) && item.color !== 'green') {
         item.color = 'yellow';
-        solutionArray[solutionArray.indexOf(item.key)] = '_';
+        answerArray[answerArray.indexOf(item.key)] = '_';
       }
     });
 
@@ -62,7 +62,7 @@ export function useWordle(solution: string) {
    */
   const addNewGuess = (formattedGuess: FormattedGuess) => {
     // 정답인지 확인
-    if (currentGuess === solution) {
+    if (currentGuess === answer) {
       setIsCorrect(true);
     }
 
@@ -131,12 +131,12 @@ export function useWordle(solution: string) {
       }
 
       if (currentGuess.length !== 5) {
-        console.log('word must me 5 chars.');
+        console.log('word must be 5 chars.');
         return;
       }
 
       //* 추측값을 화면에 보여주기 위해 포맷팅
-      const formatted = formatGuess();
+      const formatted = formatCurrentGuess();
 
       addNewGuess(formatted);
     }
