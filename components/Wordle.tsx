@@ -1,5 +1,5 @@
+import { useWordle } from '@/hooks/useWordle';
 import React, { useEffect, useState } from 'react';
-import { useWordle } from '../hooks/useWordle';
 import Grid from './Grid';
 import KeyPad from './KeyPad';
 import Modal from './Modal';
@@ -27,6 +27,7 @@ function Wordle({ solution }: { solution: string }) {
     return () => window.removeEventListener('keyup', handleKeyUp);
   }, [handleKeyUp, isCorrect, turn]);
 
+  //! 삭제할꺼임 [로깅용]
   useEffect(() => {
     console.log(`guess: `, guesses);
     console.log(turn, isCorrect);
@@ -34,7 +35,6 @@ function Wordle({ solution }: { solution: string }) {
 
   return (
     <>
-      <div>Current Guess - {currentGuess}</div>
       <Grid guesses={guesses} currentGuess={currentGuess} turn={turn} />
       <KeyPad usedKeys={usedKeys} />
       {showModal && (

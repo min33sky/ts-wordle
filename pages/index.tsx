@@ -2,6 +2,7 @@ import Header from '@/components/Header';
 import Wordle from '@/components/Wordle';
 import { getBaseUrl } from '@/lib/getBaseUrl';
 import type { NextPage } from 'next';
+import Head from 'next/head';
 import { useState } from 'react';
 
 const Home: NextPage<{ keyword: string }> = ({ keyword }) => {
@@ -11,6 +12,9 @@ const Home: NextPage<{ keyword: string }> = ({ keyword }) => {
 
   return (
     <>
+      <Head>
+        <title>Wordle</title>
+      </Head>
       <Header />
       <main>
         <Wordle solution={solution} />

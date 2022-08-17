@@ -24,10 +24,13 @@ body {
   height: 100vh;
 }
 
-/* rows */
+.grid {
+  margin: 50px 0;
+}
+
 .row {
-  text-align: center;
   display: flex;
+  /* text-align: center; */
   justify-content: center;
 }
 

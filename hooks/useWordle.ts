@@ -1,20 +1,27 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 
 export type FormattedGuess = {
   key: string;
   color: string;
 }[];
 
+type IUsedKeys = {
+  [key: string]: 'green' | 'yellow' | 'grey';
+};
+
+const TURN_LIMIT = 5; //* 턴 제한
+const CHAR_LIMIT = 5; //* 글자수 제한
+
+/**
+ * Wordle 관련 Hook
+ * @param solution - an Answer String
+ */
 export function useWordle(solution: string) {
   const [turn, setTurn] = useState(0);
   const [currentGuess, setCurrentGuess] = useState(''); // 현재 입력한 추측값
-  const [guesses, setGuesses] = useState<FormattedGuess[]>(
-    Array(6)
-      .fill(null)
-      .map((_) => [])
-  ); // each guess is array
-  const [history, setHistory] = useState<string[]>([]); // each guess is a string
-  const [usedKeys, setUsedKeys] = useState<{ [key: string]: 'green' | 'yellow' | 'grey' }>({}); // keypad color
+  const [history, setHistory] = useState<string[]>([]); // 추측값들을 담은 배열 (문자열 배열)
+  const [guesses, setGuesses] = useState<FormattedGuess[]>(Array(6).fill([])); // 화면에 보여주기 위해 설정한 추측값들의 배열
+  const [usedKeys, setUsedKeys] = useState<IUsedKeys>({}); // 사용된 키들과 키에 해당하는 색상을 설정한 객체
   const [isCorrect, setIsCorrect] = useState(false);
 
   /**
@@ -60,7 +67,11 @@ export function useWordle(solution: string) {
     }
 
     // guesses 배열에 추가 (해당 turn에 해당하는 인덱스에 넣어준다.)
-    setGuesses((prev) => [...prev.slice(0, turn), formattedGuess, ...prev.slice(turn + 1)]);
+    setGuesses((prev) => [
+      ...prev.slice(0, turn),
+      formattedGuess,
+      ...prev.slice(turn + 1),
+    ]);
 
     // history 배열에 추가
     setHistory((prev) => [...prev, currentGuess]);
@@ -102,31 +113,31 @@ export function useWordle(solution: string) {
   };
 
   /**
-   * handle keyup event & track current guess
-   * if user presses enter, add the new guess
+   *## 키 이벤트 핸들러
    */
   const handleKeyUp = ({ key }: KeyboardEvent) => {
+    /**
+     *? 현재 입력한 값을 저장하고, 엔터를 누르면 추측값을 배열에 추가한다.
+     */
     if (key === 'Enter') {
-      //* 6턴까지만 입력을 받는다.
-      if (turn > 5) {
-        console.log('limit 5 turn');
+      if (turn > TURN_LIMIT) {
+        console.log('Limit 5 turn');
         return;
       }
 
-      //* 중복은 허용하지 않는다.
       if (history.includes(currentGuess)) {
-        console.log('you already tried that word');
+        console.log('You already tried that word');
         return;
       }
 
-      //* 5자리만 입력을 허용한다.
       if (currentGuess.length !== 5) {
         console.log('word must me 5 chars.');
         return;
       }
 
-      //* 포맷팅
+      //* 추측값을 화면에 보여주기 위해 포맷팅
       const formatted = formatGuess();
+
       addNewGuess(formatted);
     }
 
@@ -136,7 +147,7 @@ export function useWordle(solution: string) {
     }
 
     if (/^[a-zA-Z]$/.test(key)) {
-      if (currentGuess.length < 5) {
+      if (currentGuess.length < CHAR_LIMIT) {
         setCurrentGuess((prev) => prev + key);
       }
     }

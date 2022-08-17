@@ -10,7 +10,7 @@ interface IGrid {
 
 function Grid({ guesses, currentGuess, turn }: IGrid) {
   return (
-    <>
+    <section className="grid">
       {guesses.map((guess, index) => {
         //? 입력중인 값을 출력
         if (index === turn) {
@@ -19,7 +19,7 @@ function Grid({ guesses, currentGuess, turn }: IGrid) {
         //? 이미 입력한 값을 출력
         return <Row key={index} guess={guess} />;
       })}
-    </>
+    </section>
   );
 }
 
