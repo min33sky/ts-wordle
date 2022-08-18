@@ -6,8 +6,16 @@ import Modal from './Modal';
 import { Portal } from './Portal';
 
 function Wordle({ solution }: { solution: string }) {
-  const { currentGuess, handleKeyUp, turn, guesses, isCorrect, usedKeys } =
-    useWordle(solution);
+  const {
+    answer,
+    currentGuess,
+    handleKeyUp,
+    turn,
+    guesses,
+    isCorrect,
+    usedKeys,
+    initWordle,
+  } = useWordle(solution);
   const [showModal, setShowModal] = useState(false);
 
   //* 키보드 이벤트 등록
@@ -15,23 +23,22 @@ function Wordle({ solution }: { solution: string }) {
     window.addEventListener('keyup', handleKeyUp);
 
     if (isCorrect) {
-      setTimeout(() => setShowModal(true), 2000);
+      setTimeout(() => setShowModal(true), 1500);
       window.removeEventListener('keyup', handleKeyUp);
     }
 
     if (turn > 5) {
-      setTimeout(() => setShowModal(true), 2000);
+      setTimeout(() => setShowModal(true), 1500);
       window.removeEventListener('keyup', handleKeyUp);
     }
 
     return () => window.removeEventListener('keyup', handleKeyUp);
   }, [handleKeyUp, isCorrect, turn]);
 
-  //! 삭제할꺼임 [로깅용]
-  useEffect(() => {
-    console.log(`guess: `, guesses);
-    console.log(turn, isCorrect);
-  }, [guesses, isCorrect, turn]);
+  const restart = () => {
+    initWordle();
+    setShowModal(false);
+  };
 
   return (
     <>
@@ -39,7 +46,12 @@ function Wordle({ solution }: { solution: string }) {
       <KeyPad usedKeys={usedKeys} />
       {showModal && (
         <Portal>
-          <Modal isCorrect={isCorrect} turn={turn} solution={solution} />
+          <Modal
+            isCorrect={isCorrect}
+            turn={turn}
+            answer={answer}
+            onRestart={restart}
+          />
         </Portal>
       )}
     </>

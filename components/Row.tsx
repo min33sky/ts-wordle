@@ -1,21 +1,21 @@
+import { CHAR_LIMIT } from '@/constants/game';
 import React from 'react';
 import { FormattedGuess } from '../hooks/useWordle';
 
 interface IRow {
   guess: FormattedGuess;
-  currentGuess?: string;
+  currentGuess: string;
+  active: boolean;
 }
 
 /**
  * 입력한 추측값을 출력해주는 Row 컴포넌트
- * @param param0
- * @returns
  */
-function Row({ guess, currentGuess }: IRow) {
+function Row({ guess, currentGuess, active }: IRow) {
   /**
    *? 현재 입력중인 추측값이 있다면 출력해준다.
    */
-  if (currentGuess) {
+  if (active) {
     const letters = currentGuess.split('');
 
     return (
@@ -25,7 +25,7 @@ function Row({ guess, currentGuess }: IRow) {
             {letter}
           </div>
         ))}
-        {[...Array(5 - currentGuess.length)].map((_, index) => (
+        {[...Array(CHAR_LIMIT - currentGuess.length)].map((_, index) => (
           <div key={index}></div>
         ))}
       </div>

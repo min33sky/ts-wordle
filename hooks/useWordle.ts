@@ -1,3 +1,5 @@
+import { getWordle } from '@/api/getWordle';
+import { CHAR_LIMIT, TURN_LIMIT } from '@/constants/game';
 import { useState } from 'react';
 
 export type FormattedGuess = {
@@ -5,18 +7,14 @@ export type FormattedGuess = {
   color: string;
 }[];
 
-type IUsedKeys = {
-  [key: string]: 'green' | 'yellow' | 'grey';
-};
-
-const TURN_LIMIT = 5; //* 턴 제한
-const CHAR_LIMIT = 5; //* 글자수 제한
+type IUsedKeys = Record<string, 'green' | 'yellow' | 'grey'>;
 
 /**
  * Wordle 관련 Hook
- * @param answer - an Answer String
+ * @param solution - an Answer String
  */
-export function useWordle(answer: string) {
+export function useWordle(solution: string) {
+  const [answer, setAnswer] = useState(solution);
   const [turn, setTurn] = useState(0);
   const [currentGuess, setCurrentGuess] = useState(''); // 현재 입력한 추측값
   const [history, setHistory] = useState<string[]>([]); // 추측값들을 담은 배열 (문자열 배열)
@@ -56,12 +54,10 @@ export function useWordle(answer: string) {
   };
 
   /**
-   * add a new guess to the guessed state
-   * update the isCorrect state if the guess is correct
-   * add one to the turn state
+   * 새로운 추측값을 추측된 값들 배열에 추가하는 함수
+   * @param formattedGuess - 포맷팅된 추측값
    */
   const addNewGuess = (formattedGuess: FormattedGuess) => {
-    // 정답인지 확인
     if (currentGuess === answer) {
       setIsCorrect(true);
     }
@@ -79,7 +75,7 @@ export function useWordle(answer: string) {
     // turn 추가
     setTurn((prev) => prev + 1);
 
-    //? 키패드 색깔 정하기
+    //? 키패드에 사용된 키 색상 정하기
     setUsedKeys((prevUsedKeys) => {
       /**
        *? 현재 키패드의 색깔과 다음에 표시될 글자의 색깔을 비교해서 다음 키패드의 색깔을 정한다.
@@ -147,11 +143,33 @@ export function useWordle(answer: string) {
     }
 
     if (/^[a-zA-Z]$/.test(key)) {
+      console.log('currentGuess', currentGuess);
+      console.log('guesses', guesses);
       if (currentGuess.length < CHAR_LIMIT) {
         setCurrentGuess((prev) => prev + key);
       }
     }
   };
 
-  return { turn, currentGuess, guesses, isCorrect, handleKeyUp, usedKeys };
+  const initWordle = async () => {
+    setIsCorrect(false);
+    setTurn(0);
+    setHistory([]);
+    setGuesses(Array(6).fill([]));
+    setCurrentGuess('');
+    setUsedKeys({});
+    const newAnswer = await getWordle();
+    setAnswer(newAnswer);
+  };
+
+  return {
+    turn,
+    currentGuess,
+    guesses,
+    isCorrect,
+    handleKeyUp,
+    usedKeys,
+    initWordle,
+    answer,
+  };
 }
